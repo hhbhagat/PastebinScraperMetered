@@ -15,11 +15,11 @@ import org.jsoup.select.Elements;
 import org.apache.commons.io.FileUtils;
 
 /*TODO:
- * 1. Comment code
- * 2. Refactor out to methods
- * 3. Implement object to contain paste URLs
- * 4. Integrate raw-paste cleaning into Paste classes
- * 4. Differentiate between expiring pastes and forever pastes and separate accordingly 
+ * /1. Comment code
+ * /2. Refactor out to methods
+ * /3. Implement object to contain paste URLs
+ * /4. Integrate raw-paste cleaning into Paste classes
+ * /TODO LATER 4. Differentiate between expiring pastes and forever pastes and separate accordingly 
  * 5. Implement scanning queue
  * 6. Implement timer to prevent site lockout
  * 
@@ -99,7 +99,8 @@ public class Pastebin {
 
                 Elements filteredList_tr = list.select("tr"); //Gets the hrefs of pastes from the list
 
-                for (int i = 0; i < filteredList_tr.size(); i++) { //adds them all to RawHREF
+                //starting at one because of the first table element being garbage
+                for (int i = 1; i < filteredList_tr.size(); i++) { //adds them all to RawHREF
 
                     String type = filteredList_tr.select("td[align]").get(0).select("a[href]").get(0).text();
                     tempObj.setType(type);
@@ -122,7 +123,7 @@ public class Pastebin {
                     genericPastes.add(tempObj);
                 }
             } catch (Exception e) {
-                System.out.println("Sorry, the site had blocked you.");
+                System.out.println(e.getMessage() + "Sorry, the site had blocked you.");
             }
             
             int g = 0;
