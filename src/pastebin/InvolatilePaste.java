@@ -6,7 +6,10 @@ import java.util.ArrayList;
 public class InvolatilePaste extends Paste{
 
     //Paste properties
-    String rawURL = "";
+    String pURL = "";
+    String pTitle = "";
+    String pType = "";
+    private String rawURL = "";
 
     //<editor-fold defaultstate="collapsed" desc="Setters">
     @Override
