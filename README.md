@@ -1,4 +1,4 @@
-PastebinScraperUnmetered
-========================
+PastebinScraperMetered
+======================
 
-This version of the pastebin scraper is one that does not take into account IP Blocking.
+Metered version of PasteScraperUnmetered
