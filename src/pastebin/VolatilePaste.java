@@ -2,7 +2,7 @@ package pastebin;
 
 import java.net.URL;
 
-public class VolatilePaste {
+public class VolatilePaste extends Paste{
 
     //Paste properties
     //
