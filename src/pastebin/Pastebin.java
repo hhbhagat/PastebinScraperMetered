@@ -38,11 +38,11 @@ import org.apache.commons.io.FileUtils;
  *              -Long: Expiry time in terms of epoch
  *          -methods
  *              -Getters
- *                  -String - getURL (raw paste URL)
+ *                  -URL - getURL (raw paste URL)
  *                  -String - getType (paste type)
  *                  -String - getTitle (paste Title)
- *                  -Integer - getExpiry
- *                  -Long - getExpiry_Epoch (Get the expiry in terms of the epoch)
+ *                  -int - getExpiry
+ *                  -long - getExpiry_Epoch (Get the expiry in terms of the epoch)
  *              -Setters
  *                  -void - setURL (raw paste URL)
  *                  -void - setType (paste type)
