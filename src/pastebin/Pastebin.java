@@ -93,15 +93,16 @@ public class Pastebin {
 
             scanThis("http://pastebin.com/archive/"); //scans the archive and gets the list.
 
-            Paste tempObj = new InvolatilePaste(); //involatile paste fallback
+            
             try {
+                
                 list = doc.select(".maintable"); //gets element of list of pastes
 
                 Elements filteredList_tr = list.select("tr"); //Gets the hrefs of pastes from the list
 
                 //starting at one because of the first table element being garbage
                 for (int i = 1; i < filteredList_tr.size(); i++) { //adds them all to RawHREF
-
+                    Paste tempObj = new InvolatilePaste(); //involatile paste fallback
                     String type = filteredList_tr.select("td[align]").get(0).select("a[href]").get(0).text();
                     tempObj.setType(type);
 
@@ -125,44 +126,11 @@ public class Pastebin {
             } catch (Exception e) {
                 System.out.println(e.getMessage() + "Sorry, the site had blocked you.");
             }
-            
-            int g = 0;
-            int numFiles = 0;
-            for (Paste p : genericPastes) {
-
-                //String heuristics = detectType(Jsoup.connect(p.getURL().toString()).toString());
-                //maybe later ^^^
-
-                URL v = p.getURL();
-                File folder = new File("L:" + File.separator + "pastes" + File.separator);
-                numFiles = folder.listFiles().length;
-
-                try {
-                    if (!(p.getType().contentEquals("None"))) {
-                        file = new File("L:" + File.separator + "pastes" + File.separator + p.getType() + File.separator + "Pastebin" + " - " + p.getTitle() + " - " + p.getURL().toString().replace("http://pastebin.com/raw.php?i=", "") + ".txt");
-                    } else {
-                        file = new File("L:" + File.separator + "pastes" + File.separator + "Pastebin" + " - " + p.getTitle() + " - " + p.getURL().toString().replace("http://pastebin.com/raw.php?i=", "")+ ".txt");
-                    }
-                    
-                    if (!(file.exists())) { //check for overlapping files. This is a bit 
-                        file.getParentFile().mkdirs();
-                        file.createNewFile();
-                        FileUtils.copyURLToFile(v, file);
-                        System.out.println("Created file for: " + p.getTitle());
-                    }
-                    g++;
-                } catch (Exception e) {
-                    System.out.println("Sorry, the site had blocked you");
-                }
-            }
-
-
-            //Clear after the pass.
-
+            deDupe();
             System.out.println("Now Pausing for " + ptime / 60000 + " Mins....");
             Thread.sleep(ptime);
 
-            deDupe();
+            
 
         }
 
@@ -194,6 +162,7 @@ public class Pastebin {
     }
 
     private static void deDupe() {
+        System.out.println("Deduping...");
         //perform deduplication
         try {
             for (int i = 0; i < invPastes.size(); i++) {
@@ -253,5 +222,32 @@ public class Pastebin {
         }
         return heuristics;
 
+    }
+
+    private void savePastes(ArrayList<Paste> arr) {
+        for (Paste p : arr) {
+
+            //String heuristics = detectType(Jsoup.connect(p.getURL().toString()).toString());
+            //maybe later ^^^
+
+            URL v = p.getURL();
+            File folder = new File("L:" + File.separator + "pastes" + File.separator);
+            try {
+                if (!(p.getType().contentEquals("None"))) {
+                    file = new File("L:" + File.separator + "pastes" + File.separator + p.getType() + File.separator + "Pastebin" + " - " + p.getTitle() + " - " + p.getURL().toString().replace("http://pastebin.com/raw.php?i=", "") + ".txt");
+                } else {
+                    file = new File("L:" + File.separator + "pastes" + File.separator + "Pastebin" + " - " + p.getTitle() + " - " + p.getURL().toString().replace("http://pastebin.com/raw.php?i=", "") + ".txt");
+                }
+
+                if (!(file.exists())) { //check for overlapping files. This is a bit 
+                    file.getParentFile().mkdirs();
+                    file.createNewFile();
+                    FileUtils.copyURLToFile(v, file);
+                    System.out.println("Created file for: " + p.getTitle());
+                }
+            } catch (Exception e) {
+                System.out.println("Sorry, the site had blocked you");
+            }
+        }
     }
 }
