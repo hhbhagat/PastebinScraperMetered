@@ -5,9 +5,9 @@ import java.net.URL;
 public class VolatilePaste extends Paste {
 
     //Paste properties
-    String pURL = "";
-    String pTitle = "";
-    String pType = "";
+    private String pURL = "";
+    private String pTitle = "";
+    private String pType = "";
     //Numbers
     int expTime = 0;
     long expTimeEpoch = 0;
@@ -68,4 +68,11 @@ public class VolatilePaste extends Paste {
         return expTimeEpoch;
     }
     //</editor-fold>
+    
+    //
+    @Override
+    public int getHash(){
+        return pURL.hashCode();
+    }
+    
 }

@@ -11,4 +11,5 @@ public abstract class Paste {
     public abstract URL getURL();
     public abstract String getType();
     public abstract String getTitle();
+    public abstract int getHash();
 }

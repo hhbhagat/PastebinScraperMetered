@@ -6,9 +6,9 @@ import java.util.ArrayList;
 public class InvolatilePaste extends Paste{
 
     //Paste properties
-    String pURL = "";
-    String pTitle = "";
-    String pType = "";
+    private String pURL = "";
+    private String pTitle = "";
+    private String pType = "";
     private String rawURL = "";
 
     //<editor-fold defaultstate="collapsed" desc="Setters">
@@ -57,4 +57,10 @@ public class InvolatilePaste extends Paste{
     }
 
     //</editor-fold>
+    
+    @Override
+    public int getHash(){
+        return pURL.hashCode();
+    }
+    
 }
