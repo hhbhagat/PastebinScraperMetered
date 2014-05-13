@@ -65,6 +65,4 @@ public class VolatilePaste {
     }
     //</editor-fold>
     
-    
-    
 }
