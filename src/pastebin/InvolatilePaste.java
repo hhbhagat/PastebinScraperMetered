@@ -1,15 +1,16 @@
 package pastebin;
 
 import java.net.URL;
+import java.util.ArrayList;
 
-public class InvolatilePaste {
+public class InvolatilePaste extends Paste{
 
     //Paste properties
     String pURL = "";
     String pTitle = "";
     String pType = "";
     String rawURL = "";
-    
+
     //<editor-fold defaultstate="collapsed" desc="Setters">
     public void setURL(String u) {
         pURL = u;
@@ -22,11 +23,11 @@ public class InvolatilePaste {
     public void setTitle(String t) {
         pTitle = t;
     }
-    
-    public void setRawURL(String ru){
+
+    public void setRawURL(String ru) {
         rawURL = ru;
     }
-    
+
     //</editor-fold>
     //<editor-fold defaultstate="collapsed" desc="Getters">
     public URL getURL() {
@@ -36,21 +37,18 @@ public class InvolatilePaste {
             return null;
         }
     }
-    
-    public String getType(){
+
+    public String getType() {
         return pType;
     }
-    
-    public String getTitle(){
+
+    public String getTitle() {
         return pTitle;
     }
-    
-    public String getRawURL(){
+
+    public String getRawURL() {
         return rawURL;
     }
-    
+
     //</editor-fold>
-    
-    
-    
 }
