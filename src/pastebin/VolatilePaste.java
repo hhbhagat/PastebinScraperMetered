@@ -19,14 +19,17 @@ public class VolatilePaste extends Paste{
     }
 
     //<editor-fold defaultstate="collapsed" desc="Setters">
+    @Override
     public void setURL(String u) {
         pURL = u;
     }
 
+    @Override
     public void setType(String pt) {
         pType = pt;
     }
 
+    @Override
     public void setTitle(String t) {
         pTitle = t;
     }
@@ -40,6 +43,7 @@ public class VolatilePaste extends Paste{
     }
     //</editor-fold>
     //<editor-fold defaultstate="collapsed" desc="Getters">
+    @Override
     public URL getURL() {
         try {
             return new URL(pURL);
@@ -48,10 +52,12 @@ public class VolatilePaste extends Paste{
         }
     }
     
+    @Override
     public String getType(){
         return pType;
     }
     
+    @Override
     public String getTitle(){
         return pTitle;
     }
