@@ -2,15 +2,12 @@ package pastebin;
 
 import java.net.URL;
 
-public class VolatilePaste extends Paste{
+public class VolatilePaste extends Paste {
 
     //Paste properties
-    //
-    //Strings
     String pURL = "";
     String pTitle = "";
     String pType = "";
-    String rawURL = "";
     //Numbers
     int expTime = 0;
     long expTimeEpoch = 0;
@@ -43,6 +40,7 @@ public class VolatilePaste extends Paste{
     }
     //</editor-fold>
     //<editor-fold defaultstate="collapsed" desc="Getters">
+
     @Override
     public URL getURL() {
         try {
@@ -51,24 +49,23 @@ public class VolatilePaste extends Paste{
             return null;
         }
     }
-    
+
     @Override
-    public String getType(){
+    public String getType() {
         return pType;
     }
-    
+
     @Override
-    public String getTitle(){
+    public String getTitle() {
         return pTitle;
     }
-    
-    public int getExpiry(){
+
+    public int getExpiry() {
         return expTime;
     }
-    
-    public long getExpiry_Epoch(){
+
+    public long getExpiry_Epoch() {
         return expTimeEpoch;
     }
     //</editor-fold>
-    
 }
