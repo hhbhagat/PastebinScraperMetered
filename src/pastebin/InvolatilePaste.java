@@ -63,4 +63,13 @@ public class InvolatilePaste extends Paste{
         return pURL.hashCode();
     }
     
+    @Override
+    public Paste getCopy(){
+        Paste p = new InvolatilePaste();
+        p.setURL(pURL);
+        p.setTitle(pTitle);
+        p.setType(pType);
+        return p;
+    }
+    
 }

@@ -12,4 +12,5 @@ public abstract class Paste {
     public abstract String getType();
     public abstract String getTitle();
     public abstract int getHash();
+    public abstract Paste getCopy();
 }

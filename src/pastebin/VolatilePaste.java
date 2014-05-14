@@ -75,4 +75,13 @@ public class VolatilePaste extends Paste {
         return pURL.hashCode();
     }
     
+    @Override
+    public Paste getCopy(){
+        Paste p = new VolatilePaste();
+        p.setURL(pURL);
+        p.setTitle(pTitle);
+        p.setType(pType);
+        return p;
+    }
+    
 }
