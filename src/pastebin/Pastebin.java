@@ -79,7 +79,6 @@ public class Pastebin {
 //pastebin archive has 250 recent paste capacity
     public static void main(String[] args) throws Exception {
 
-
         System.out.println("Specify scrape interval (In Minutes)");
         Scanner input1 = new Scanner(System.in);
         ptime = input1.nextInt();
@@ -90,7 +89,6 @@ public class Pastebin {
         while (true) {
 
             scanThis("http://pastebin.com/archive/"); //scans the archive and gets the list.
-
 
             try {
 
@@ -120,7 +118,7 @@ public class Pastebin {
                     title = title.replace("|", "_pipe_");
                     tempObj.setTitle(title);
                     genericPastes.add(tempObj);
-
+                    
                     for (int z = 0; z < genericPastes.size() - 1; z++) {//check for dupes
                         if (genericPastes.get(genericPastes.size() - 1).getURL().toString().equals(genericPastes.get(z).getURL().toString())) {
                             genericPastes.remove(genericPastes.size() - 1);
@@ -136,10 +134,8 @@ public class Pastebin {
                 System.out.println(e.getMessage() + "Sorry, the site had blocked you.");
             }
             System.out.println("Now Pausing for " + ptime / 60000 + " Mins....");
-            Thread.sleep(2000);
-
-
-
+            ptime = 8*60000;
+            Thread.sleep(ptime);
         }
 
     }
