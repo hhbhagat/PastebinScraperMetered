@@ -1,16 +1,14 @@
 package pastebin;
 
-import java.io.BufferedReader;
+import com.rits.cloning.Cloner;
 import java.io.BufferedWriter;
 import java.io.File;
-import java.io.FileReader;
 import java.io.FileWriter;
 import java.net.URL;
 import java.util.ArrayList;
 import org.jsoup.nodes.Document;
 import java.util.Scanner;
 import org.jsoup.Jsoup;
-import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 import org.apache.commons.io.FileUtils;
 
@@ -93,9 +91,9 @@ public class Pastebin {
 
             scanThis("http://pastebin.com/archive/"); //scans the archive and gets the list.
 
-            
+
             try {
-                
+
                 list = doc.select(".maintable"); //gets element of list of pastes
 
                 Elements filteredList_tr = list.select("tr"); //Gets the hrefs of pastes from the list
@@ -122,15 +120,25 @@ public class Pastebin {
                     title = title.replace("|", "_pipe_");
                     tempObj.setTitle(title);
                     genericPastes.add(tempObj);
+
+                    for (int z = 0; z < genericPastes.size() - 1; z++) {//check for dupes
+                        if (genericPastes.get(genericPastes.size() - 1).getURL().toString().equals(genericPastes.get(z).getURL().toString())) {
+                            genericPastes.remove(genericPastes.size() - 1);
+                            break;
+                        }
+                    }
+
                 }
             } catch (Exception e) {
+                for (StackTraceElement a : e.getStackTrace()) {
+                    System.out.println(a);
+                }
                 System.out.println(e.getMessage() + "Sorry, the site had blocked you.");
             }
-            deDupe();
             System.out.println("Now Pausing for " + ptime / 60000 + " Mins....");
-            Thread.sleep(ptime);
+            Thread.sleep(2000);
 
-            
+
 
         }
 
@@ -139,7 +147,9 @@ public class Pastebin {
     private static Document scanThis(String archive) {
 
         try {
+            System.out.println("Getting");
             doc = Jsoup.connect(archive).userAgent("Mozilla").get();
+            System.out.println("Getting Finished");
         } catch (Exception e) {
             System.out.println("Sorry, you'll have to wait some time because the site blocked you");
             System.out.println("Waiting for ...." + "31" + " minutes");
@@ -159,32 +169,6 @@ public class Pastebin {
         BufferedWriter out = new BufferedWriter(new FileWriter("L:\\a.txt"));
         out.write(input + "\n");
         out.close();
-    }
-
-    private static void deDupe() {
-        System.out.println("Deduping...");
-        //perform deduplication
-        try {
-            for (int i = 0; i < invPastes.size(); i++) {
-                for (InvolatilePaste compare : invPastes) {
-                    if (compare.getHash() == invPastes.get(i).getHash()) {
-                        invPastes.remove(i);
-                        i--; //decrement in case of removal
-                    }
-                }
-            }
-
-            for (int i = 0; i < volPastes.size(); i++) {
-                for (VolatilePaste compare : volPastes) {
-                    if (compare.getHash() == volPastes.get(i).getHash()) {
-                        volPastes.remove(i);
-                        i--; //decrement in case of removal
-                    }
-                }
-            }
-        } catch (Exception e) {
-            System.out.println("Failed to dedupe");
-        }
     }
 
     private static String detectType(String tempContents) {
