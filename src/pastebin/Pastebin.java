@@ -1,16 +1,16 @@
 package pastebin;
 
-import com.rits.cloning.Cloner;
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;
-import java.net.URL;
 import java.util.ArrayList;
 import org.jsoup.nodes.Document;
 import java.util.Scanner;
+import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.locks.Lock;
+import java.util.concurrent.locks.ReentrantLock;
 import org.jsoup.Jsoup;
 import org.jsoup.select.Elements;
-import org.apache.commons.io.FileUtils;
 
 /*TODO:
  * /1. Comment code
@@ -73,8 +73,12 @@ public class Pastebin {
     private static ArrayList<InvolatilePaste> invPastes = new ArrayList<InvolatilePaste>();
     private static ArrayList<VolatilePaste> volPastes = new ArrayList<VolatilePaste>();
     private static ArrayList<Paste> genericPastes = new ArrayList<Paste>();
-    private static int INDEX_START = 10;
-    private static int INDEX_STOP = 18;
+    private static ArrayList<Paste> diffGenericPastes = new ArrayList<Paste>();
+    private static PastePool pool = new PastePool();
+    private static Lock blockedLock = new ReentrantLock();
+    private static ArrayList<Thread> threadArr = new ArrayList<Thread>();
+    private static boolean firstRun = true;
+    private static CountDownLatch cdlatch = new CountDownLatch(1);
 
 //pastebin archive has 250 recent paste capacity
     public static void main(String[] args) throws Exception {
@@ -86,6 +90,7 @@ public class Pastebin {
         ptime = ptime * 60000;
 
         //Main program logic
+
         while (true) {
 
             scanThis("http://pastebin.com/archive/"); //scans the archive and gets the list.
@@ -118,7 +123,7 @@ public class Pastebin {
                     title = title.replace("|", "_pipe_");
                     tempObj.setTitle(title);
                     genericPastes.add(tempObj);
-                    
+
                     for (int z = 0; z < genericPastes.size() - 1; z++) {//check for dupes
                         if (genericPastes.get(genericPastes.size() - 1).getURL().toString().equals(genericPastes.get(z).getURL().toString())) {
                             genericPastes.remove(genericPastes.size() - 1);
@@ -133,8 +138,33 @@ public class Pastebin {
                 }
                 System.out.println(e.getMessage() + "Sorry, the site had blocked you.");
             }
+
+            if (firstRun) {
+                startDownloadThread();
+                firstRun = false;
+            }
+
+            if (cdlatch.getCount() == 1) {
+                System.out.println("Resuming thread.");
+
+                Runnable r = new Runnable() {
+                    public void run() {
+                        Pastebin.resumeThread();
+                    }
+                };
+                new Thread(r).start();
+                
+            }
+
             System.out.println("Now Pausing for " + ptime / 60000 + " Mins....");
-            ptime = 8*60000;
+
+            addToPool();
+            genericPastes.clear();
+            cdlatch = new CountDownLatch(1);
+            System.out.println("Cleared paste cache.");
+
+            ptime = 10 * 60000;
+
             Thread.sleep(ptime);
         }
 
@@ -204,30 +234,36 @@ public class Pastebin {
 
     }
 
-    private void savePastes(ArrayList<Paste> arr) {
-        for (Paste p : arr) {
+    private static void startDownloadThread() {
+        //Code for Download Queueing.
 
-            //String heuristics = detectType(Jsoup.connect(p.getURL().toString()).toString());
-            //maybe later ^^^
+        for (int i = 0; i < genericPastes.size(); i++) {
+            pool.addPaste(genericPastes.get(i));
+            pool.addRecord(genericPastes.get(i)); //adds record for future comparison to prevent duplicate entries into thread jobs
+        }
+//        for (Paste p : genericPastes) {
+//            pool.addPaste(p);
+//            pool.addRecord(p); //adds record for future comparison to prevent duplicate entries into thread jobs
+//        }
+//        diffGenericPastes.clear();
 
-            URL v = p.getURL();
-            File folder = new File("L:" + File.separator + "pastes" + File.separator);
-            try {
-                if (!(p.getType().contentEquals("None"))) {
-                    file = new File("L:" + File.separator + "pastes" + File.separator + p.getType() + File.separator + "Pastebin" + " - " + p.getTitle() + " - " + p.getURL().toString().replace("http://pastebin.com/raw.php?i=", "") + ".txt");
-                } else {
-                    file = new File("L:" + File.separator + "pastes" + File.separator + "Pastebin" + " - " + p.getTitle() + " - " + p.getURL().toString().replace("http://pastebin.com/raw.php?i=", "") + ".txt");
-                }
+        PasteThread pThread = new PasteThread();
+        pThread.init(pool, blockedLock, cdlatch, 30);
+        Thread t1 = new Thread(pThread);
+        threadArr.add(t1);
+        t1.start();
+    }
 
-                if (!(file.exists())) { //check for overlapping files. This is a bit 
-                    file.getParentFile().mkdirs();
-                    file.createNewFile();
-                    FileUtils.copyURLToFile(v, file);
-                    System.out.println("Created file for: " + p.getTitle());
-                }
-            } catch (Exception e) {
-                System.out.println("Sorry, the site had blocked you");
-            }
+    private static void addToPool() {
+        for (Paste p : genericPastes) {
+            pool.addPaste(p);
+            pool.addRecord(p);
+        }
+    }
+
+    private static void resumeThread() {
+        synchronized (blockedLock) {
+            cdlatch.countDown();
         }
     }
 }
